@@ -1,0 +1,159 @@
+Skip to content
+Search or jump to…
+Pull requests
+Issues
+Marketplace
+Explore
+ 
+@danielkassey 
+sjeena
+/
+MicroII-Lab-3
+Public
+Code
+Issues
+Pull requests
+Actions
+Projects
+Wiki
+Security
+Insights
+Create hw3
+ main
+@sjeena
+sjeena committed on Nov 21, 2021 
+0 parents commit 631cb00e2c7612b56680e028d1898e835e52f494
+Showing  with 110 additions and 0 deletions.
+ 110  hw3 
+@@ -0,0 +1,110 @@
+//Sakshi Jeena, Skylar Smith, Daniel Kassey
+#include "RTClib.h"
+#include <LiquidCrystal.h>
+#define BUTTON 8
+#define SPEED A0
+
+const int motorpin1 = 7;
+const int motorpin2 = 9;
+int motor_speed;
+int ccwSpeed;
+int count;
+
+RTC_DS1307 rtc;
+LiquidCrystal lcd(12, 11, 5, 4, 3, 2); // (rs, e, d4, d5, d6, d7)
+char daysOfTheWeek[7][12] = {"Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"};
+void setup()
+{
+  Serial.begin(9600);
+  lcd.begin(16, 2);
+  pinMode(BUTTON,INPUT);
+  pinMode(SPEED,OUTPUT);
+
+
+  if (! rtc.begin())
+  {
+    lcd.print("Couldn't find RTC");
+    while (1);
+  }
+  if (! rtc.isrunning())
+  {
+    lcd.print("RTC is NOT running!");
+  }
+  rtc.adjust(DateTime(F(__DATE__), F(__TIME__)));//auto update from computer time
+  //rtc.adjust(DateTime(2014, 1, 21, 3, 0, 0));// to set the time manualy
+}
+void loop()
+{
+ LCDscreen(); //program continuously updating LCD
+ fanControl(); //comment out to see part 3
+ //minBegining(); //part 3
+ lcd.clear();
+
+}
+
+void LCDscreen()
+{
+  DateTime now = rtc.now();
+  lcd.setCursor(0, 1);
+  lcd.print(now.hour());
+  lcd.print(':');
+  lcd.print(now.minute());
+  lcd.print(':');
+  lcd.print(now.second());
+  lcd.print(" ");
+  lcd.setCursor(0, 0);
+  lcd.print(daysOfTheWeek[now.dayOfTheWeek()]);
+  lcd.print(":");
+  lcd.print(now.month());
+  lcd.print('/');
+  lcd.print(now.day());
+  lcd.print('/');
+  lcd.print(now.year());
+  }
+
+void fanControl()
+{
+    if(digitalRead(BUTTON)== 1)
+    {
+    int cwSpeed = 152; //adjust speed of motor
+    analogWrite(SPEED,cwSpeed);  
+    digitalWrite(motorpin1, LOW);
+    digitalWrite(motorpin2, HIGH);
+    lcd.setCursor(9, 1);
+    lcd.print("CW ");
+    lcd.setCursor(12,1);
+    lcd.print(cwSpeed);
+
+    }
+    if (digitalRead(BUTTON)== 0 )
+    {
+
+    ccwSpeed = 225; //ajust speed of motor
+    analogWrite(SPEED,ccwSpeed);
+    digitalWrite(motorpin1, HIGH);
+    digitalWrite(motorpin2, LOW);
+    lcd.setCursor(9, 1);
+    lcd.print("CCW ");
+    lcd.setCursor(13,1);
+    lcd.print(ccwSpeed);
+
+    }
+  }
+ void minBegining()
+  {
+    DateTime now = rtc.now();
+
+    if(now.second() <= 30)
+    {
+    ccwSpeed = 225;
+    analogWrite(SPEED,ccwSpeed);
+    digitalWrite(motorpin1, HIGH);
+    digitalWrite(motorpin2, LOW);
+     delay(30000);
+      int stop = 0;
+    analogWrite(SPEED,stop);
+    digitalWrite(motorpin1, LOW);
+    digitalWrite(motorpin2, LOW);
+
+  }
+  }
+0 comments on commit 631cb00
+@danielkassey
+ 
+ 
+Leave a comment
+No file chosen
+Attach files by dragging & dropping, selecting or pasting them.
+ You’re not receiving notifications from this thread.
+© 2022 GitHub, Inc.
+Terms
+Privacy
+Security
+Status
+Docs
+Contact GitHub
+Pricing
+API
+Training
+Blog
+About
+Loading complete
